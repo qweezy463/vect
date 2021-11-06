@@ -1,0 +1,89 @@
+from dataclasses import dataclass, field
+
+
+@dataclass
+class Vector:
+    x: float = field(default=0)
+    y: float = field(default=0)
+
+    def __repr__(self) -> str:
+        return f"Vector({self.x}, {self.y})"
+
+    def __init__(self, x, y) -> None:
+        self.x = x
+        self.y = y
+        self.length = (x ** 2 + y ** 2) ** .5
+
+    def param(self):
+        return self.x, self.y
+
+    def length(self):
+        return (self.x ** 2 + self.y ** 2) ** .5
+
+    def multiplication(self, n):
+        return self.x * n, self.y * n
+
+    def division(self, n):
+        return self.x / n, self.y / n
+
+    def addition(self, x, y):
+        return self.x + x, self.y + y
+
+    def subtraction(self, x, y):
+        return self.x - x, self.y - y
+
+
+@dataclass
+class Path:
+    points: list[Vector] = field(default_factory=list)
+
+    def kpd_ind(self, ind: list):
+        # если даются индексы обязательных точек
+        return 1 / (self.way() / self.min_way_ind(ind))
+
+    def min_way_ind(self, imp_dots: list):
+        # если даются индексы обязательных точек
+        sum = 0
+        for i in range(len(imp_dots) - 1):
+            sum += self.len_way(imp_dots[i], imp_dots[i + 1])
+        return sum
+
+    def kpd_dots(self, dots: list):
+        # если даются обязательные точки
+        return 1 / (self.way() / self.min_way_dots(dots))
+
+    def min_way_dots(self, dots: list):
+        # если даются обязательные точки
+        sum = 0
+        for i in range(len(dots) - 1):
+            sum += self.len_way(i, i + 1)
+        return sum
+
+    def len_way(self, i1, i2):
+        return ((self.points[i1].x - self.points[i2].x) ** 2 + (self.points[i1].y - self.points[i2].y) ** 2) ** .5
+
+    def way(self):
+        sum = 0
+        for i in range(len(self.points) - 1):
+            sum += self.len_way(i, i + 1)
+        return sum
+
+
+@dataclass
+class Company:
+    paths: list[Path] = field(default_factory=list)
+
+
+v1 = Vector(-1, -1)
+v2 = Vector(-1, 1)
+v3 = Vector(1, 1)
+v4 = Vector(1, -1)
+
+p = Path([v1, v2, v3, v4])
+print(p.way())
+
+print(p.min_way_ind([0, 3]))
+print(p.kpd_ind([0, 3]))
+
+print(p.min_way_dots([v1, v2]))
+print(p.kpd_dots([v1
